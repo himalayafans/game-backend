@@ -18,6 +18,8 @@ namespace GameBackend.Controllers
         [HttpGet]
         public DateTime Test()
         {
+            string sql = Properties.Resources.database;
+
             return DateTime.Now;
         }
 
