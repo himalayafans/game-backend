@@ -4,10 +4,37 @@
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <NoWarn>1701;1702;1591</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <NoWarn>1701;1702;1591</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.0.123" />
+    <PackageReference Include="Dapper.Contrib" Version="2.0.78" />
+    <PackageReference Include="Npgsql" Version="6.0.7" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Library\Core\" />
+    <Folder Include="Library\Common\" />
+    <Folder Include="Library\Enums\" />
+    <Folder Include="Library\Interfaces\" />
+    <Folder Include="Library\Features\" />
+    <Folder Include="Library\Entities\" />
+    <Folder Include="Library\Exceptions\" />
+    <Folder Include="Library\Repositories\" />
+    <Folder Include="Library\Services\" />
+    <Folder Include="Library\Repository\" />
+    <Folder Include="Library\Mapper\" />
+    <Folder Include="Library\ViewModels\" />
   </ItemGroup>
 
 </Project>
