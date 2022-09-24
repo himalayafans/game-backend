@@ -11,6 +11,13 @@ namespace GameBackend.Controllers
     [ApiController]
     public class DemoController : ControllerBase
     {
+        private readonly ILogger<DemoController> _logger;
+
+        public DemoController(ILogger<DemoController> logger)
+        {
+            this._logger = logger;
+        }
+
         /// <summary>
         /// 测试方法
         /// </summary>
@@ -18,8 +25,7 @@ namespace GameBackend.Controllers
         [HttpGet]
         public DateTime Test()
         {
-            string sql = Properties.Resources.database;
-
+            _logger.LogWarning("警告信息");
             return DateTime.Now;
         }
 
