@@ -6,6 +6,7 @@ namespace GameBackend.Library.Data
     {
         private readonly IConfiguration Configuration;
 
+
         public DbFactory(IConfiguration configuration)
         {
             Configuration = configuration;

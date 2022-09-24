@@ -1,17 +1,22 @@
-﻿using Npgsql;
+﻿using GameBackend.Library.Repositories;
+using Npgsql;
 using System.Data.Common;
 
 namespace GameBackend.Library.Data
 {
-    public class UnitOfWork: IDisposable
+    public class UnitOfWork : IDisposable
     {
         public NpgsqlConnection Connection { get; }
+        /// <summary>
+        /// 配置选项存储库
+        /// </summary>
+        public ConfigRepository Config { get; }
 
         public UnitOfWork(DbFactory factory)
         {
             string t = factory.GetConnectionString();
-            this.Connection = new NpgsqlConnection(t);     
-            this.Connection.ReloadTypes();
+            this.Connection = new NpgsqlConnection(t);
+            this.Config = new ConfigRepository(this.Connection);
         }
         /// <summary>
         /// 开启事务

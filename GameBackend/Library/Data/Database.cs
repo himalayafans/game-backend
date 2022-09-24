@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using Npgsql;
+using System.Data.Common;
 
 namespace GameBackend.Library.Data
 {
@@ -8,62 +9,65 @@ namespace GameBackend.Library.Data
     /// </summary>
     public class Database
     {
-        private string _connectionString = string.Empty;
-        private NpgsqlConnection _connection;
+        private DbFactory _dbFactory;
 
-        public Database(string connectionString)
+        public Database(DbFactory dbFactory)
         {
-            _connectionString = connectionString;
-            _connection = new NpgsqlConnection(connectionString);
+            _dbFactory = dbFactory ?? throw new ArgumentNullException(nameof(dbFactory));
         }
 
-        private void CreateTables()
+        private async Task CreateTables(DbConnection connection)
         {
             string sql = Properties.Resources.database;
-            _connection.Execute(sql);
+            await connection.ExecuteAsync(sql);
         }
         /// <summary>
         /// 获取数据中表的总数
         /// </summary>
-        private int GetTableCount()
+        private async Task<int> GetTableCount(DbConnection connection)
         {
             string sql = "SELECT count(*) FROM information_schema.tables where table_schema = 'public';";
-            int count = _connection.ExecuteScalar<int>(sql);
+            int count = await connection.ExecuteScalarAsync<int>(sql);
             return count;
         }
-        private void CreateRows()
+        private async Task CreateRows(UnitOfWork work)
         {
-
+            Version version = new Version(1, 0, 0, 0);
+            await work.Config.SetDbVersion(version);
+            await work.Config.SetAppName();
         }
         /// <summary>
         /// 播种数据
         /// </summary>
-        public void Seed()
+        public async Task Seed()
         {
-            _connection.Open();
-            int tableCount = GetTableCount();
-            if (tableCount == 0)
+            using (var work = _dbFactory.StartWork())
             {
-                var trans = _connection.BeginTransaction();
-                try
+                await work.Connection.OpenAsync();
+                int tableCount = await GetTableCount(work.Connection);
+                if (tableCount == 0)
                 {
-                    Console.WriteLine("start creating table...");
-                    CreateTables();
-                    Console.WriteLine("start creating row...");
-                    CreateRows();
-                    Console.WriteLine("Data seeding succeeded.");
-                    trans.Commit();
+                    var trans = work.Connection.BeginTransaction();
+                    try
+                    {
+                        Console.WriteLine("start creating table...");
+                        await CreateTables(work.Connection);
+                        Console.WriteLine("start creating row...");
+                        await CreateRows(work);
+                        trans.Commit();
+                        Console.WriteLine("Data seeding succeeded.");
+                    }
+                    catch (Exception ex)
+                    {
+                        trans.Rollback();
+                        Console.WriteLine("Error:" + ex.Message);
+                    }
                 }
-                catch (Exception)
+                else
                 {
-                    trans.Rollback();
-                    throw;
-                }               
+                    Console.WriteLine("The database is not empty, skip the initialization process...");
+                }
             }
-            else
-            {
-                Console.WriteLine("The database is not empty, skip the initialization process...");
-            }           
         }
     }
 }

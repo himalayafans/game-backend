@@ -27,9 +27,9 @@ builder.Services.AddDatabase();
 var app = builder.Build();
 
 #region 播种数据
-ConfigurationManager configuration = builder.Configuration;
 if (args.Contains("seed"))
 {
+    ConfigurationManager configuration = builder.Configuration;
     string connString = configuration.GetConnectionString("PostgreSQL");
     if (String.IsNullOrEmpty(connString))
     {
@@ -37,15 +37,12 @@ if (args.Contains("seed"))
     }
     else
     {
-        try
+        using (var serviceScope = app.Services.CreateScope())
         {
-            Database database = new Database(connString);
-            database.Seed();
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.Message);
-            throw;
+            var services = serviceScope.ServiceProvider;
+            var database = services.GetRequiredService<Database>();
+            Task task = database.Seed();
+            task.Wait();
         }
     }
     return; // 退出应用程序

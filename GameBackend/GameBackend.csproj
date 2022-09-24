@@ -33,14 +33,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Library\Core\" />
     <Folder Include="Library\Common\" />
     <Folder Include="Library\Enums\" />
     <Folder Include="Library\Interfaces\" />
     <Folder Include="Library\Features\" />
-    <Folder Include="Library\Entities\" />
     <Folder Include="Library\Exceptions\" />
-    <Folder Include="Library\Repositories\" />
+    <Folder Include="Library\Options\" />
     <Folder Include="Library\Services\" />
     <Folder Include="Library\Repository\" />
     <Folder Include="Library\Mapper\" />
