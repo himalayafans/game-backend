@@ -31,7 +31,8 @@ builder.Services.AddSwaggerGen(s =>
     s.IncludeXmlComments(xmlPath);
 });
 #endregion
-builder.Services.AddDatabase();
+
+builder.Services.AddSiteServices();
 
 var app = builder.Build();
 

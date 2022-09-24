@@ -1,4 +1,5 @@
 ﻿using GameBackend.Library.Data;
+using GameBackend.Library.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,12 +13,13 @@ namespace GameBackend.Controllers
     public class DemoController : ControllerBase
     {
         private readonly ILogger<DemoController> _logger;
+        private readonly EncryptionService _encryptionService;
 
-        public DemoController(ILogger<DemoController> logger)
+        public DemoController(ILogger<DemoController> logger, EncryptionService encryptionService)
         {
-            this._logger = logger;
+            _logger = logger;
+            _encryptionService = encryptionService;
         }
-
         /// <summary>
         /// 测试方法
         /// </summary>
@@ -25,6 +27,7 @@ namespace GameBackend.Controllers
         [HttpGet]
         public DateTime Test()
         {
+            _logger.LogWarning(_encryptionService.PasswordHash("123"));
             _logger.LogWarning("警告信息");
             return DateTime.Now;
         }

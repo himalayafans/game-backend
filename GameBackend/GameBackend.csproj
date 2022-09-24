@@ -40,7 +40,6 @@
     <Folder Include="Library\Features\" />
     <Folder Include="Library\Exceptions\" />
     <Folder Include="Library\Options\" />
-    <Folder Include="Library\Services\" />
     <Folder Include="Library\Repository\" />
     <Folder Include="Library\Mapper\" />
     <Folder Include="Library\ViewModels\" />
