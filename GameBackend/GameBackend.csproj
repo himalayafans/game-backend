@@ -35,8 +35,6 @@
 
   <ItemGroup>
     <Folder Include="Library\Common\" />
-    <Folder Include="Library\Enums\" />
-    <Folder Include="Library\Interfaces\" />
     <Folder Include="Library\Features\" />
     <Folder Include="Library\Exceptions\" />
     <Folder Include="Library\Options\" />
