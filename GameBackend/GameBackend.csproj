@@ -36,7 +36,7 @@
   <ItemGroup>
     <Folder Include="Library\Common\" />
     <Folder Include="Library\Features\" />
-    <Folder Include="Library\Exceptions\" />
+    <Folder Include="Library\Interfaces\" />
     <Folder Include="Library\Options\" />
     <Folder Include="Library\Repository\" />
     <Folder Include="Library\Mapper\" />

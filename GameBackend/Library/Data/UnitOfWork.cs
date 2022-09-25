@@ -8,15 +8,20 @@ namespace GameBackend.Library.Data
     {
         public NpgsqlConnection Connection { get; }
         /// <summary>
-        /// 配置选项存储库
+        /// 配置选项
         /// </summary>
         public ConfigRepository Config { get; }
+        /// <summary>
+        /// 账号
+        /// </summary>
+        public AccountRepository Account { get; set; }
 
         public UnitOfWork(DbFactory factory)
         {
             string t = factory.GetConnectionString();
             this.Connection = new NpgsqlConnection(t);
             this.Config = new ConfigRepository(this.Connection);
+            Account = new AccountRepository(this.Connection);
         }
         /// <summary>
         /// 开启事务

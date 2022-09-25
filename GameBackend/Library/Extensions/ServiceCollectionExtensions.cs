@@ -13,6 +13,7 @@ namespace GameBackend.Library.Extensions
             services.AddScoped<DbFactory, DbFactory>();
             services.AddScoped<Database, Database>();
             services.AddScoped<EncryptionService, EncryptionService>();
+            services.AddScoped<AccountService, AccountService>();
         }
     }
 }

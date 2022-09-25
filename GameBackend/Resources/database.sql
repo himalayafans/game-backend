@@ -18,7 +18,7 @@ create table account
     id              uuid primary key,
     name            varchar(50)  not null unique,
     email           varchar(50) unique,
-    password        varchar(50)  not null,
+    password        varchar(100)  not null,
     avatar          varchar(100) not null,
     is_active_email bool         not null default false,
     last_updated    timestamp    not null default current_timestamp,

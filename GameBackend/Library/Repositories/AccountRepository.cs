@@ -1,5 +1,9 @@
 ﻿using Dapper;
+using Dapper.Contrib.Extensions;
+using GameBackend.Library.Entities;
+using GameBackend.Library.Exceptions;
 using Npgsql;
+using System.Data.Common;
 
 namespace GameBackend.Library.Repositories
 {
@@ -29,6 +33,47 @@ namespace GameBackend.Library.Repositories
             var count = await Connection.ExecuteScalarAsync<int>(sql, new { Email = email.Trim().ToLower() });
             return count > 0;
         }
-
+        /// <summary>
+        /// 插入数据
+        /// </summary>
+        public async Task<Account> Insert(string name,string email,string passwordHash, DbTransaction? transaction = null)
+        {
+            var now = DateTime.Now;
+            var account = new Account()
+            {
+                id = Guid.NewGuid(),
+                name = name.Trim().ToLower(),
+                email = email.Trim().ToLower(),
+                password = passwordHash,
+                avatar = "",
+                is_active_email = false,
+                last_updated = now,
+                status = Enums.AccountStatus.Enable,
+                create_time = now
+            };
+            await this.Connection.InsertAsync(account, transaction);
+            return account;
+        }
+        /// <summary>
+        /// 修改密码
+        /// </summary>
+        /// <param name="id">用户ID</param>
+        /// <param name="newPasswordHash">新的密码哈希值</param>
+        public async Task ModifyPassword(Guid id, string newPasswordHash)
+        {
+            string sql = "update account set password=@Password,last_updated=@LastUpdated where id=@Id;";
+            await this.Connection.ExecuteAsync(sql, new { Id = id.ToString(), Password = newPasswordHash, LastUpdated = DateTime.Now });
+        }
+        /// <summary>
+        /// 修改头像
+        /// </summary>
+        /// <param name="id">用户ID</param>
+        /// <param name="avatar">新的头像URL</param>
+        public async Task<Account> ModifyAvatar(Guid id, string avatar)
+        {
+            string sql = "update account set avatar=@Avatar where id=@Id;";
+            await this.Connection.ExecuteAsync(sql, new { Id = id.ToString(), Avatar = avatar.Trim() });
+            return await this.Connection.GetAsync<Account>(id);
+        }
     }
 }
