@@ -5,9 +5,11 @@ namespace GameBackend.Library.Dtos.Account
     public class AccountRegisterDto
     {
         /// <summary>
-        /// 登录账号
+        /// 用户名
         /// </summary>
-        [Required(ErrorMessage ="登录账号不能为空")]
+        [Required(ErrorMessage ="用户名不能为空")]
+        [StringLength(30, MinimumLength = 6,ErrorMessage = "用户名的长度需为 6 至30 个字符")]
+        [RegularExpression(@"^[0-9a-zA-Z]+$",ErrorMessage = "用户名只允许包含字母或数字")]
         public string Name { get; set; } = string.Empty;
         /// <summary>
         /// 注册邮箱

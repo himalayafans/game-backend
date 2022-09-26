@@ -5,33 +5,12 @@ using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
-#region 设置日志
-var logger = new LoggerConfiguration().ReadFrom.Configuration(builder.Configuration).Enrich.FromLogContext().CreateLogger();
-builder.Logging.ClearProviders();
-builder.Logging.AddSerilog(logger);
-#endregion
-
 // Add services to the container.
+builder.AddLogger();
 builder.Services.AddControllers();
-
-#region 设置Swagger接口文档
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(s =>
-{
-    s.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
-    {
-        Version = "v1",
-        Title = "Game API",
-        Description = ""
-    });
-    // 设置Swagger文档
-    string xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-    string xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-    s.IncludeXmlComments(xmlPath);
-});
-#endregion
-
+builder.AddJwtAuth();
+//builder.Services.AddSwaggerDoc();
+builder.AddJwtSwagger();
 builder.Services.AddSiteServices();
 
 var app = builder.Build();
@@ -67,6 +46,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
