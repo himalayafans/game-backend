@@ -35,7 +35,6 @@ namespace GameBackend.Library.Extensions
         }
         public static void AddJwtSwagger(this WebApplicationBuilder builder)
         {
-            // 代码来源： https://dev.to/moe23/net-6-minimal-api-authentication-jwt-with-swagger-and-open-api-2chh
             var securityScheme = new OpenApiSecurityScheme()
             {
                 Name = "Authorization",
@@ -59,32 +58,10 @@ namespace GameBackend.Library.Extensions
                     new string[] {}
                 }
             };
-            //var contact = new OpenApiContact()
-            //{
-            //    Name = "Mohamad Lawand",
-            //    Email = "hello@mohamadlawand.com",
-            //    Url = new Uri("http://www.mohamadlawand.com")
-            //};
-            //var license = new OpenApiLicense()
-            //{
-            //    Name = "Free License",
-            //    Url = new Uri("http://www.mohamadlawand.com")
-            //};
-
-            //var info = new OpenApiInfo()
-            //{
-            //    Version = "v1",
-            //    Title = "Minimal API - JWT Authentication with Swagger demo",
-            //    Description = "Implementing JWT Authentication in Minimal API",
-            //    TermsOfService = new Uri("http://www.example.com"),
-            //    Contact = contact,
-            //    License = license
-            //};
-
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(o =>
             {
-                //o.SwaggerDoc("v1", info);
+                o.EnableAnnotations();
                 o.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
                 {
                     Version = "v1",

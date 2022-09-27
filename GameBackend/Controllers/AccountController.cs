@@ -1,14 +1,16 @@
-﻿using GameBackend.Library.Dtos.Account;
+﻿using GameBackend.Controllers.Base;
+using GameBackend.Library.Common;
+using GameBackend.Library.Dtos.Account;
 using GameBackend.Library.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
+using System.Net;
 
 namespace GameBackend.Controllers
 {
-    [Route("[controller]/[action]")]
-    [ApiController]
-    public class AccountController : ControllerBase
+    public class AccountController : BaseApiController
     {
         private AccountService _accountService;
 
@@ -23,17 +25,18 @@ namespace GameBackend.Controllers
             throw new NotImplementedException();
         }
 
-        /// <summary>
-        /// 账号注册
-        /// </summary>
-        /// <param name="account">账号</param>
-        /// <returns></returns>
         [HttpPost]
+        [SwaggerOperation("账号注册")]
+        [ProducesResponseType(typeof(List<AjaxResult<string>>), (int)HttpStatusCode.OK)]
         [AllowAnonymous]
-        public async Task<IActionResult> Register([FromBody] AccountRegisterDto account)
+        public async Task<AjaxResult<string>> Register([FromBody] AccountRegisterDto account)
         {
+            if (account.Name == "admin")
+            {
+                throw new Exception("该名称已存在");
+            }
             await _accountService.Register(account);
-            return Ok();
+            return this.AjaxResult();
         }
     }
 }
