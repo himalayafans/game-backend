@@ -9,7 +9,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.AddLogger();
 builder.Services.AddControllers();
 builder.AddJwtAuth();
-//builder.Services.AddSwaggerDoc();
 builder.AddJwtSwagger();
 builder.Services.AddSiteServices();
 

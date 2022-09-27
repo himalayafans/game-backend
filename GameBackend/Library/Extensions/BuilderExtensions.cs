@@ -2,6 +2,7 @@
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
+using System.Reflection;
 using System.Text;
 
 namespace GameBackend.Library.Extensions
@@ -68,6 +69,9 @@ namespace GameBackend.Library.Extensions
                     Title = "Game API",
                     Description = ""
                 });
+                string xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                string xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                o.IncludeXmlComments(xmlPath);
                 o.AddSecurityDefinition("Bearer", securityScheme);
                 o.AddSecurityRequirement(securityReq);
             });

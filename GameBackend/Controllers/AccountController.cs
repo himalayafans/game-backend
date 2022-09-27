@@ -25,9 +25,11 @@ namespace GameBackend.Controllers
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// 账号注册
+        /// </summary>
+        /// <param name="account">账号</param>
         [HttpPost]
-        [SwaggerOperation("账号注册")]
-        [ProducesResponseType(typeof(List<AjaxResult<string>>), (int)HttpStatusCode.OK)]
         [AllowAnonymous]
         public async Task<AjaxResult<string>> Register([FromBody] AccountRegisterDto account)
         {
