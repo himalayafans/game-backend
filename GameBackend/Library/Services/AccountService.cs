@@ -1,7 +1,12 @@
 ﻿using Dapper.Contrib.Extensions;
 using GameBackend.Library.Data;
 using GameBackend.Library.Dtos.Account;
+using GameBackend.Library.Entities;
 using GameBackend.Library.Exceptions;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace GameBackend.Library.Services
 {
@@ -44,23 +49,47 @@ namespace GameBackend.Library.Services
         /// <summary>
         /// 登录账号
         /// </summary>
-        public async Task Login(AccountLoginDto account)
+        public async Task<AccountLoginResultDto> Login(AccountLoginDto request)
         {
             using (var work = _dbFactory.StartWork())
             {
                 await work.Connection.OpenAsync();
-                var result = await work.Account.GetFromNameOrEmail(account.Name);
+                var account = await work.Account.GetFromNameOrEmail(request.NameOrEmail);
                 var error = "账号或密码错误,请重新输入";
-                if(result == null)
+                if (account == null)
                 {
                     throw new SiteException(error);
                 }
-                if(_encryptionService.PasswordHash(account.Password) != result.password)
+                var hash = _encryptionService.PasswordHash(request.Password);
+                if (hash != account.password)
                 {
                     throw new SiteException(error);
                 }
-
+                var token = BuildToken(account);
+                return new AccountLoginResultDto() { Id = account.id, Name = account.name, Token = token, Avatar = account.avatar };
             }
+        }
+        /// <summary>
+        /// 创建Jwt Token
+        /// </summary>
+        /// <param name="account"></param>
+        /// <returns></returns>
+        private string BuildToken(Account account)
+        {
+            var issuer = _configuration["Jwt:Issuer"];
+            var audience = _configuration["Jwt:Audience"];
+            var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]);
+            var claims = new[]
+            {
+                new Claim(ClaimTypes.Name, account.name),
+                //new Claim(ClaimTypes.Role, ""),
+                new Claim(ClaimTypes.NameIdentifier, account.id.ToString()), // 用户的ID， 参考资料：https://stackoverflow.com/a/11147240
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()) // 每个token的唯一标识
+             };
+            var securityKey = new SymmetricSecurityKey(key);
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);
+            var tokenDescriptor = new JwtSecurityToken(issuer, audience, claims, expires: DateTime.Now.AddDays(7), signingCredentials: credentials);
+            return new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
         }
     }
 }

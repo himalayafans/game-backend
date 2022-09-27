@@ -21,6 +21,7 @@ namespace GameBackend.Library.Dtos.Account
         /// 登录密码
         /// </summary>
         [Required(ErrorMessage ="密码不能为空")]
+        [RegularExpression(@"^[0-9a-zA-Z_]+$", ErrorMessage = "密码只允许包含字母、数字或下划线")]
         public string Password { get;set; } = string.Empty;
     }
 }

@@ -18,11 +18,15 @@ namespace GameBackend.Controllers
         {
             _accountService = accountService;
         }
-
+        /// <summary>
+        /// 账号登录
+        /// </summary>
         [HttpPost]
-        public async Task<IActionResult> Login([FromBody] AccountLoginDto account)
+        [AllowAnonymous]
+        public async Task<AjaxResult<AccountLoginResultDto>> Login([FromBody] AccountLoginDto request)
         {
-            throw new NotImplementedException();
+            var response = await this._accountService.Login(request);
+            return this.AjaxResult(response);
         }
 
         /// <summary>
