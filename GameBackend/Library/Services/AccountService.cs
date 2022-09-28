@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Net;
 
 namespace GameBackend.Library.Services
 {
@@ -36,11 +37,11 @@ namespace GameBackend.Library.Services
                 await work.Connection.OpenAsync();
                 if (await work.Account.IsExistName(account.Name))
                 {
-                    throw new ModelException(nameof(account.Name), "该账号已存在");
+                    throw new ModelException(nameof(account.Name), "该账号已存在", HttpStatusCode.BadRequest);
                 }
                 if (await work.Account.IsExistEmail(account.Email))
                 {
-                    throw new ModelException(nameof(account.Email), "该邮箱已被注册");
+                    throw new ModelException(nameof(account.Email), "该邮箱已被注册", HttpStatusCode.BadRequest);
                 }
                 string hash = _encryptionService.PasswordHash(account.Password.Trim());
                 await work.Account.Insert(account.Name, account.Email, hash);
@@ -58,12 +59,12 @@ namespace GameBackend.Library.Services
                 var error = "账号或密码错误,请重新输入";
                 if (account == null)
                 {
-                    throw new SiteException(error);
+                    throw new HttpException(HttpStatusCode.Unauthorized, error);
                 }
                 var hash = _encryptionService.PasswordHash(request.Password);
                 if (hash != account.password)
                 {
-                    throw new SiteException(error);
+                    throw new HttpException(HttpStatusCode.Unauthorized, error);
                 }
                 var token = BuildToken(account);
                 return new AccountLoginResultDto() { Id = account.id, Name = account.name, Token = token, Avatar = account.avatar };

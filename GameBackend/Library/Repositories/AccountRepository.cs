@@ -78,11 +78,11 @@ namespace GameBackend.Library.Repositories
         /// <summary>
         /// 通过登录账号或邮箱获取账号
         /// </summary>
-        public async Task<Account> GetFromNameOrEmail(string nameOrEmail)
+        public async Task<Account?> GetFromNameOrEmail(string nameOrEmail)
         {
             nameOrEmail = nameOrEmail.Trim().ToLower();
             string sql = "select * from account where lower(name)=@Name or lower(email)=@Email;";
-            var account = await this.Connection.QuerySingleAsync<Account>(sql, new {Name = nameOrEmail, Email = nameOrEmail});
+            var account = await this.Connection.QueryFirstOrDefaultAsync<Account?>(sql, new { Name = nameOrEmail, Email = nameOrEmail });
             return account;
         }
         

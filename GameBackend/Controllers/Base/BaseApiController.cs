@@ -1,4 +1,5 @@
 ﻿using GameBackend.Library.Common;
+using GameBackend.Library.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -7,6 +8,7 @@ namespace GameBackend.Controllers.Base
 {
     [Route("[controller]/[action]")]
     [ApiController]
+    [TypeFilter(typeof(HttpExceptionFilter))]
     public abstract class BaseApiController : ControllerBase
     {
         /// <summary>
