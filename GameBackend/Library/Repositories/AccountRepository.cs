@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using Dapper.Contrib.Extensions;
+using GameBackend.Library.Common;
 using GameBackend.Library.Entities;
 using GameBackend.Library.Exceptions;
 using Npgsql;
@@ -36,7 +37,7 @@ namespace GameBackend.Library.Repositories
         /// <summary>
         /// 插入数据
         /// </summary>
-        public async Task<Account> Insert(string name,string email,string passwordHash, DbTransaction? transaction = null)
+        public async Task<Account> Insert(string name, string email, string passwordHash, string role = RoleNames.User, DbTransaction? transaction = null)
         {
             var now = DateTime.Now;
             var account = new Account()
@@ -49,7 +50,8 @@ namespace GameBackend.Library.Repositories
                 is_active_email = false,
                 last_updated = now,
                 status = Enums.AccountStatus.Enable,
-                create_time = now
+                create_time = now,
+                role = role
             };
             await this.Connection.InsertAsync(account, transaction);
             return account;
@@ -85,6 +87,14 @@ namespace GameBackend.Library.Repositories
             var account = await this.Connection.QueryFirstOrDefaultAsync<Account?>(sql, new { Name = nameOrEmail, Email = nameOrEmail });
             return account;
         }
-        
+        /// <summary>
+        /// 修改用户角色
+        /// </summary>
+        public async Task<Account> ModifyRole(Guid id, string role)
+        {
+            string sql = "update account set role=@Role where id=@Id;";
+            await this.Connection.ExecuteAsync(sql, new { Id = id, Role = role });
+            return await this.Connection.GetAsync<Account>(id);
+        }
     }
 }

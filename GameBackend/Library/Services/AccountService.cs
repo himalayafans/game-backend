@@ -83,7 +83,7 @@ namespace GameBackend.Library.Services
             var claims = new[]
             {
                 new Claim(ClaimTypes.Name, account.name),
-                //new Claim(ClaimTypes.Role, ""),
+                new Claim(ClaimTypes.Role, account.role),
                 new Claim(ClaimTypes.NameIdentifier, account.id.ToString()), // 用户的ID， 参考资料：https://stackoverflow.com/a/11147240
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()) // 每个token的唯一标识
              };

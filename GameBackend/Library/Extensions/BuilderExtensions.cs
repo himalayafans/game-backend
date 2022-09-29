@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using GameBackend.Library.Data;
+using GameBackend.Library.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
@@ -84,6 +86,18 @@ namespace GameBackend.Library.Extensions
             var logger = new LoggerConfiguration().ReadFrom.Configuration(builder.Configuration).Enrich.FromLogContext().CreateLogger();
             builder.Logging.ClearProviders();
             builder.Logging.AddSerilog(logger);
+        }
+
+        /// <summary>
+        /// 增加站点相关服务
+        /// </summary>
+        public static void AddSiteServices(this WebApplicationBuilder builder)
+        {
+            builder.Services.AddCors(); // 跨域
+            builder.Services.AddScoped<DbFactory, DbFactory>();
+            builder.Services.AddScoped<Database, Database>();
+            builder.Services.AddScoped<EncryptionService, EncryptionService>();
+            builder.Services.AddScoped<AccountService, AccountService>();
         }
     }
 }

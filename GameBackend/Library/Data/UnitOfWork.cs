@@ -1,4 +1,5 @@
-﻿using GameBackend.Library.Repositories;
+﻿using GameBackend.Library.Entities;
+using GameBackend.Library.Repositories;
 using Npgsql;
 using System.Data.Common;
 
@@ -21,7 +22,7 @@ namespace GameBackend.Library.Data
             string t = factory.GetConnectionString();
             this.Connection = new NpgsqlConnection(t);
             this.Config = new ConfigRepository(this.Connection);
-            Account = new AccountRepository(this.Connection);
+            this.Account = new AccountRepository(this.Connection);
         }
         /// <summary>
         /// 开启事务

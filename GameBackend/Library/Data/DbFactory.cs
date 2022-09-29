@@ -16,7 +16,7 @@ namespace GameBackend.Library.Data
         /// </summary>
         public string GetConnectionString()
         {
-            return Configuration.GetConnectionString("PostgreSQL");
+            return Configuration.GetConnectionString("Default");
         }
         /// <summary>
         /// 启动一个新的工作单元

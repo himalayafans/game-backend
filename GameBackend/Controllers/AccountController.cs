@@ -1,6 +1,7 @@
 ﻿using GameBackend.Controllers.Base;
 using GameBackend.Library.Common;
 using GameBackend.Library.Dtos.Account;
+using GameBackend.Library.Extensions;
 using GameBackend.Library.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -43,6 +44,14 @@ namespace GameBackend.Controllers
             }
             await _accountService.Register(account);
             return this.AjaxResult();
+        }
+
+        [HttpGet]
+        [Authorize(Roles = RoleNames.SuperAdmin)]
+        public string Protected()
+        {
+            var user = this.HttpContext.User.GetUserId();
+            return "仅Token有效";
         }
     }
 }

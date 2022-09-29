@@ -1,4 +1,5 @@
 ﻿using Dapper.Contrib.Extensions;
+using GameBackend.Library.Common;
 using GameBackend.Library.Enums;
 
 namespace GameBackend.Library.Entities
@@ -43,5 +44,9 @@ namespace GameBackend.Library.Entities
         /// 注册时间
         /// </summary>
         public DateTime create_time { get; set; } = DateTime.Now;
+        /// <summary>
+        /// 角色名称
+        /// </summary>
+        public string role { get; set; } = RoleNames.User;
     }
 }

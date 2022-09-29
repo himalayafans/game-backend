@@ -1,4 +1,7 @@
 ﻿using Dapper;
+using GameBackend.Library.Common;
+using GameBackend.Library.Entities;
+using GameBackend.Library.Services;
 using Npgsql;
 using System.Data.Common;
 
@@ -10,16 +13,18 @@ namespace GameBackend.Library.Data
     public class Database
     {
         private DbFactory _dbFactory;
+        private EncryptionService _encryptionService;
 
-        public Database(DbFactory dbFactory)
+        public Database(DbFactory dbFactory, EncryptionService encryptionService)
         {
-            _dbFactory = dbFactory ?? throw new ArgumentNullException(nameof(dbFactory));
+            _dbFactory = dbFactory;
+            _encryptionService = encryptionService;
         }
 
-        private async Task CreateTables(DbConnection connection)
+        private async Task CreateTables(DbConnection connection, DbTransaction transaction)
         {
             string sql = Properties.Resources.database;
-            await connection.ExecuteAsync(sql);
+            await connection.ExecuteAsync(sql, null, transaction);
         }
         /// <summary>
         /// 获取数据中表的总数
@@ -30,11 +35,12 @@ namespace GameBackend.Library.Data
             int count = await connection.ExecuteScalarAsync<int>(sql);
             return count;
         }
-        private async Task CreateRows(UnitOfWork work)
+        private async Task CreateRows(UnitOfWork work, DbTransaction transaction)
         {
             Version version = new Version(1, 0, 0, 0);
-            await work.Config.SetDbVersion(version);
-            await work.Config.SetAppName();
+            await work.Config.SetDbVersion(version, transaction);
+            await work.Config.SetAppName(transaction);
+            await work.Account.Insert("root", "", _encryptionService.PasswordHash("123456"), RoleNames.SuperAdmin, transaction);
         }
         /// <summary>
         /// 播种数据
@@ -51,9 +57,9 @@ namespace GameBackend.Library.Data
                     try
                     {
                         Console.WriteLine("start creating table...");
-                        await CreateTables(work.Connection);
+                        await CreateTables(work.Connection, trans);
                         Console.WriteLine("start creating row...");
-                        await CreateRows(work);
+                        await CreateRows(work, trans);
                         trans.Commit();
                         Console.WriteLine("Data seeding succeeded.");
                     }

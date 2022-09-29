@@ -4,6 +4,7 @@ using GameBackend.Library.Core;
 using GameBackend.Library.Data;
 using GameBackend.Library.Entities;
 using Npgsql;
+using System.Data.Common;
 
 namespace GameBackend.Library.Repositories
 {
@@ -30,10 +31,7 @@ namespace GameBackend.Library.Repositories
         /// <summary>
         /// 保存配置项，若存在则更新，若不存在，则插入
         /// </summary>
-        /// <param name="name"></param>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        private async Task Save(string name, string value)
+        private async Task Save(string name, string value, DbTransaction? transaction = null)
         {
             // 查询是否存在该记录，若没有则插入，若存在则更新
             Config config = await this.GetByName(name);
@@ -44,13 +42,13 @@ namespace GameBackend.Library.Repositories
                     id = Guid.NewGuid(),
                     name = name.Trim(),
                     value = value.Trim()
-                };                
-                await this.Connection.InsertAsync(config);
+                };
+                await this.Connection.InsertAsync(config, transaction);
             }
             else
             {
                 config.value = value.Trim();
-                await this.Connection.UpdateAsync(config);
+                await this.Connection.UpdateAsync(config, transaction);
             }
         }
 
@@ -72,9 +70,9 @@ namespace GameBackend.Library.Repositories
         /// <summary>
         /// 设置数据库版本
         /// </summary>
-        public async Task SetDbVersion(Version version)
+        public async Task SetDbVersion(Version version, DbTransaction? transaction = null)
         {
-            await this.Save(DbVersionKey, version.ToString());
+            await this.Save(DbVersionKey, version.ToString(), transaction);
         }
         /// <summary>
         /// 获取应用名称，用于检查该数据库是否属于本应用
@@ -95,9 +93,9 @@ namespace GameBackend.Library.Repositories
         /// 设置应用程序标识，一般只在初始化数据库调用一次
         /// </summary>
         /// <returns></returns>
-        public async Task SetAppName()
+        public async Task SetAppName(DbTransaction? transaction = null)
         {
-            await this.Save(AppNameKey, Constants.AppName);
+            await this.Save(AppNameKey, Constants.AppName, transaction);
         }
     }
 }

@@ -27,17 +27,5 @@ namespace GameBackend.Library.Extensions
                 s.IncludeXmlComments(xmlPath);
             });
         }
-
-        /// <summary>
-        /// 增加站点相关服务
-        /// </summary>
-        public static void AddSiteServices(this IServiceCollection services)
-        {
-            services.AddScoped<DbFactory, DbFactory>();
-            services.AddScoped<Database, Database>();
-            services.AddScoped<EncryptionService, EncryptionService>();
-            services.AddScoped<AccountService, AccountService>();
-        }
-
     }
 }
